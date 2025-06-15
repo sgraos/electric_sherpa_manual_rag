@@ -1,7 +1,11 @@
 from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
 
-mongo_uri = "mongodb+srv://rag_access:rdMnHQ1usHRncXYp@cluster0.pfd6gvx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-mongodb_client = MongoClient(mongo_uri, appname="ntuakshayrao.evmanual_rag")
+load_dotenv()
+mongo_uri = os.getenv("DB_URI")
+mongo_app = os.getenv("MONGO_APPNAME")
+mongodb_client = MongoClient(mongo_uri, appname=mongo_app)
 
 def get_collection_list():
     db = mongodb_client["ev_manuals"]
