@@ -2,6 +2,8 @@ from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 from vertexai.preview.generative_models import GenerativeModel, ChatSession
 from pymongo import MongoClient
 import json
+import os
+from dotenv import load_dotenv
 
 # --- 1. Embedding Generator (Gemini Embedding Model) ---
 def return_embedding(text):
@@ -128,9 +130,11 @@ def run_rag_query_comprehensive(user_question: str, manual_collection: str):
     return final_answer
 
 # --- 6. MongoDB Setup ---
-mongo_uri = "mongodb+srv://rag_access:rdMnHQ1usHRncXYp@cluster0.pfd6gvx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-mongodb_client = MongoClient(mongo_uri, appname="ntuakshayrao.evmanual_rag")
-mongodb_client.admin.command("ping")
+
+load_dotenv()
+mongo_uri = os.getenv("DB_URI")
+mongo_app = os.getenv("MONGO_APPNAME")
+mongodb_client = MongoClient(mongo_uri, appname=mongo_app)
 
 # --- 7. Run It ---
 if __name__ == "__main__":
