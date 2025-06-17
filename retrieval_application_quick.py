@@ -15,15 +15,16 @@ def return_embedding(text):
     return embedding
 
 # --- 2. MongoDB Atlas Vector Search ---
-def vector_search(user_query: str, collection: str) -> list[dict]:
+def vector_search(user_query: str, coll_name: str) -> list[dict]:
     db = mongodb_client["ev_manuals"]
-    collection = db[collection]
+    collection = db[coll_name]
+    index_name = 'vector_index' + '_' + coll_name
 
     query_embedding = return_embedding(user_query)[0].values
     pipeline = [
         {
             "$vectorSearch": {
-                "index": "vector_index",
+                "index": index_name, #"vector_index",
                 "queryVector": query_embedding,
                 "path": "embedding",
                 "numCandidates": 150,
@@ -77,28 +78,19 @@ def run_rag_query_quick(user_question: str, manual_collection: str):
 
     # You control formatting here:
     instruction = """
-Format the answer into 3 sections:
-1. 📘 Summary of the issue
-2. 🔧 Suggested action steps based on manual
-3. 📄 Page references (include page numbers where info is found)
-
-Be concise and helpful.
-"""
-
+    Format the answer into 3 sections:
+    1. 📘 Summary of the issue
+    2. 🔧 Suggested action steps based on manual
+    3. 📄 Page references: {a comma-separated list of pages where info is found}
+    
+    Be concise and helpful.
+    """
     final_answer = call_gemini_flash(instruction, user_question, retrieved_chunks)
     return final_answer
 
-load_dotenv()
+
 # --- 5. MongoDB Setup ---
+load_dotenv()
 mongo_uri = os.getenv("DB_URI")
 mongo_app = os.getenv("MONGO_APPNAME")
 mongodb_client = MongoClient(mongo_uri, appname=mongo_app)
-
-# --- 6. Run Query ---
-if __name__ == "__main__":
-    collection_name = "Kia_EV6"
-    user_query = "My car is not starting"
-
-    answer = run_rag_query_quick(user_query, collection_name)
-    print("\n🚗 Gemini Flash RAG Response:\n")
-    print(answer)
