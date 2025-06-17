@@ -4,7 +4,7 @@
 This is a user-facing application to select EV manuals from list of manuals available and ask questions
 
 ## Components
-The manual is extracted, chunked, the embeddings are extracted and stored in MongoDB using the "Admin panel" script found here: 
+The manual is extracted, chunked, the embeddings are extracted and stored in MongoDB using the "Admin panel" script found here: https://github.com/sgraos/Ingest_manuals
 
 Screenshots of each page of the manual are extracted and stored in Google Cloud Storage.
 
